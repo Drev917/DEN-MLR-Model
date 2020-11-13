@@ -38,7 +38,18 @@ library(janitor)
 den3 = den2 %>%
   adorn_totals("col"); den3
 ```
+#summarize average non-airline revenue by `Month` and `Year` using dplyr
+```{r}
+avg.month = den2 %>%
+  group_by(Month) %>%
+  summarise_each(funs(mean, n()), Concession, Parking, "Rental Car", Ground)
+avg.month
+sum.month.avgs = apply(avg.month[,2:5],1,sum); sum.month.avgs
+#df.month = new dataframe joining sum of averages from variables that make up response with `Month`
+df.month = data.frame(cbind(avg.month["Month"],sum.month.avgs)); df.month
 
+#transpose df.month dataframe for use in executive summary
+View(t(df.month))
 ```
 
 
