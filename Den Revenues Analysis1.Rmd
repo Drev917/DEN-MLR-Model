@@ -1,0 +1,75 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+#importing dataset and getting initial EDA of dataset
+```{r}
+library(readxl)
+library(data.table)
+den = read_excel("DEN 2012 - Jun 17.xlsx")
+den = data.table(den)
+head(den)
+summary(den)
+
+#converted `Cannibas?` hype and no hype values to binary, however discovered character values did not impact model so removed dummy variable creation
+#den$`Cannibas?`[den$`Cannibas?` == 'hype'] = 1
+#den$`Cannibas?`[den$`Cannibas?` == 'no hype'] = 0
+```
+#selecting columns by non-airline revenues (response variable) and `Month` & `Year`
+```{r}
+library(dplyr)
+den1 = select(den, "Month and Year", Concession:Ground)
+head(den1)
+```
+#slice `Month` and `Year` column using tidyr
+#observe sum totals of Non-airline revenues using janitor
+```{r}
+library(tidyr)
+separate_time = den1 %>% 
+  separate("Month and Year", c('Day', 'Month', 'Year'))
+den2 = select(separate_time, -Day)
+#splitting date for all variables in dataset
+separate_time1 = den %>% 
+  separate("Month and Year", c('Day', 'Month', 'Year'))
+den7 = select(separate_time1, -Day); den7
+
+library(janitor)
+den3 = den2 %>%
+  adorn_totals("col"); den3
+```
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
