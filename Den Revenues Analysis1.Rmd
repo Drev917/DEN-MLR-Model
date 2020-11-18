@@ -50,6 +50,45 @@ df.month = data.frame(cbind(avg.month["Month"],sum.month.avgs)); df.month
 
 #transpose df.month dataframe for use in executive summary
 View(t(df.month))
+
+avg.year = den2 %>%
+  group_by(Year) %>%
+  summarise_each(funs(mean, n()), Concession, Parking, "Rental Car", Ground)
+avg.year
+sum.year.avgs = apply(avg.year[,2:5],1,sum); sum.year.avgs
+#df.year = new dataframe joining sum of averages from variables that make up response with `Year`
+df.year = data.frame(cbind(avg.year["Year"], sum.year.avgs)); df.year
+```
+#Visualizations: Non-airline revenues by `Month` and `Year` with ggplot2
+```{r}
+library(ggplot2)
+revplot.total = ggplot(df.month, aes(x = Month, y = sum.month.avgs)) + geom_point(size = 3, colour = "green") + ggtitle("Total Avg Non-airline Revenue by Month"); revplot.total + theme_dark()
+revplot1 = ggplot(den2, aes(x = Month, y = Concession)) + geom_point(size = 2, colour = "red") + ggtitle("Concession revenue by Month"); revplot1 + theme_dark()
+revplot2 = ggplot(den2, aes(x = Month, y = Parking)) + geom_point(size = 2, colour = "orange") + ggtitle("Parking revenue by Month"); revplot2 + theme_dark()
+revplot3 = ggplot(den2, aes(x = Month, y = `Rental Car`)) + geom_point(size = 2, colour = "yellow") + ggtitle("Rental Car revenue by Month"); revplot3 + theme_dark()
+revplot4 = ggplot(den2, aes(x = Month, y = Ground)) + geom_point(size = 2, colour = "black") + ggtitle("Ground revenue by Month"); revplot4 + theme_dark()
+
+#all non-airline revenue dependent variables have positive linear relationship with `Year`
+revplot.total.1 = ggplot(df.year, aes(x = Year, y = sum.year.avgs)) + geom_point(size = 3, colour = "blue") + ggtitle("Total Avg Non-airline Revenue by Year"); revplot.total.1 + theme_dark()
+revplot5 = ggplot(den2, aes(x = Year, y = Concession)) + geom_point(size = 2, colour = "purple") + ggtitle("Concession revenue by Year"); revplot5 + theme_dark()
+revplot6 = ggplot(den2, aes(x = Year, y = Parking)) + geom_point(size = 2, colour = "dark green") + ggtitle("Parking revenue by Year"); revplot6 + theme_dark()
+revplot7 = ggplot(den2, aes(x = Year, y = `Rental Car`)) + geom_point(size = 2, colour = "dark blue") + ggtitle("Rental Car revenue by Year"); revplot7 + theme_dark()
+revplot8 = ggplot(den2, aes(x = Year, y = Ground)) + geom_point(size = 2, colour = "dark red") + ggtitle("Ground revenue by Year"); revplot8 + theme_dark()
+
+#looked at melting all the values directly in one column for quick analysis
+library(reshape2)
+df.plot = data.frame(den2$Concession, den2$Parking, den2$`Rental Car`, den2$Ground)
+df.plot.table = data.table(df.plot)
+df.m.total = melt(df.plot.table); df.m.total
+
+#layered plots showing relationships between non-airline revenue and `Month` & `Year`
+ggplot(den2) + geom_point(aes(den2$Month,den2$Parking, colour = "Parking")) + geom_point(aes(den2$Month,den2$`Rental Car`, colour = "Rental Car")) + geom_point(aes(den2$Month,den2$Ground, colour = "Ground")) + geom_point(aes(den2$Month, den2$Concession, colour = "Concession")) + labs(x = "Months", y = "Revenue", title = "Non-airline Revenue by Month") + theme_dark()
+
+ggplot(den2) + geom_point(aes(den2$Year,den2$Parking, colour = "Parking")) + geom_point(aes(den2$Year,den2$`Rental Car`, colour = "Rental Car")) + geom_point(aes(den2$Year,den2$Ground, colour = "Ground")) + geom_point(aes(den2$Year, den2$Concession, colour = "Concession")) + labs(x = "Years", y = "Revenue", title = "Non-airline Revenue by Year") + theme_dark()
+
+#Grouped non-airline revenue by `Year` for easy analysis
+rev.year = den3 %>%
+  group_by(Year) %>%
 ```
 
 
