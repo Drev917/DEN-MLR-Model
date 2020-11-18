@@ -89,6 +89,10 @@ ggplot(den2) + geom_point(aes(den2$Year,den2$Parking, colour = "Parking")) + geo
 #Grouped non-airline revenue by `Year` for easy analysis
 rev.year = den3 %>%
   group_by(Year) %>%
+  summarise_each(funs(sum, n()), Total); rev.year
+
+#plot of total sum of non-airline revenue by `Year`
+ggplot(rev.year, aes(x = Year, y = sum)) + geom_smooth() + geom_point(size = 3, color = "green") + labs(x = "Years 2012 - 2017", y = "Revenue", title = "Total Sum of Non-airline Revenue by Year", caption = "*2017 revenues only accrued Jan - June")+ theme_dark()
 ```
 
 
