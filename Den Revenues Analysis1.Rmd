@@ -94,10 +94,59 @@ rev.year = den3 %>%
 #plot of total sum of non-airline revenue by `Year`
 ggplot(rev.year, aes(x = Year, y = sum)) + geom_smooth() + geom_point(size = 3, color = "green") + labs(x = "Years 2012 - 2017", y = "Revenue", title = "Total Sum of Non-airline Revenue by Year", caption = "*2017 revenues only accrued Jan - June")+ theme_dark()
 ```
+#trimmed top 3 rows from dataframe to avoid incorrect results from NA values
+#adding observation column to try and predict model over time
+#adding totalrev column for response variables
+```{r}
+den4 = den7[4:66,]
+den4$ObsNumber =  1:nrow(den4)
+den4$TotalRev = (den4$Concession + den4$Parking + den4$`Rental Car` + den4$Ground)
+```
 
+#Model 1: Total sum dependent variables + IVs: (Month, Destination, Cannibas, UMCSENTLag3)
+```{r}
+library(car)
 
+#using log transformation on dependent variable due to using lagged explanatory variable
+mod1 = lm(log(den4$TotalRev) ~ den4$Month + den4$Destination + den4$`Cannibas?` + den4$UMCSENTLag3)
+summary(mod1)
+plot(den4$TotalRev, mod1$residuals, xlab = 'pred', ylab = 'res', main = 'Residuals vs Predicted')
+abline(h=0, col='red')
+qqnorm(mod1$residuals)
+qqline(mod1$residuals, col=2)
+hist(mod1$residuals)
+AIC(mod1)
+BIC(mod1)
+vif(mod1)
+durbinWatsonTest(mod1)
+anova(mod1)
+#adjusted r2: 0.8555
+#AIC: -185.4749 is by far the lowest = more parsimonious model
+#BIC: -151.1847
+#DW test: p=0.36 Do not reject H0 and no autocorrelation
 
+#RMSE from summary: the square root of the residual deviance per degree of freedom
+#977992
 
+#inverse transformation of log base e on RMSE
+library(stats)
+sigma(mod1)
+
+den4$TotalRevlog = log(den4$TotalRev)
+
+rmset <- function(model){
+  y = den4$TotalRevlog
+  y.pred = predict(model)
+  
+  y<-exp(y) - 1
+  y.pred<-exp(y.pred)-1
+  
+  return(sqrt(mean((y - y.pred)^2)))
+} 
+rmset (mod1)
+
+#Looked at adding den4$ObsNumber predictor but eventually decided to remove this IV as it didn't increase the accuracy of the model in this case.
+```
 
 
 
