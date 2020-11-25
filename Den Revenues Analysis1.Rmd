@@ -147,8 +147,71 @@ rmset (mod1)
 
 #Looked at adding den4$ObsNumber predictor but eventually decided to remove this IV as it didn't increase the accuracy of the model in this case.
 ```
+```
+#creating predictor variable datasets based upon independent variables
+#Predictor Variables used across all models: `Month`,`Destination`,`Cannibas?`,`UMCSENTLag3`,`UMCSENTLag2`,`Origin + Destin`,`UMCSENTLag1`
+```{r}
+den.predict1 = den4[60:63,c("Month","Destination","Cannibas?","UMCSENTLag3")]
+den.predict2 = den4[60:63,c("Deplaned","UMCSENTLag2","Month")]
+den.predict3 = den4[60:63,c("UMCSENTLag2","Cannibas?","Month")]
+den.predict4 = den4[60:63,c("Origin + Destin", "UMCSENTLag3","Cannibas?","Month")]
+den.predict5 = den4[60:63,c("Origin + Destin", "UMCSENTLag1","Month")]
+```
 
+#Model 1: running prediction for `Month` values: March - June 2017
+```{r}
+#predict
+model1.predict = predict(mod1, den.predict1)
+#used exponential function as used log in original lm
+exp(model1.predict)
+#26901433 25923248 26707321 27711106
+```
+#Model 1: Leave-k out cross validation
+```{r}
+library(boot)
+set.seed(4)
+m1 = glm(log(den4$TotalRev) ~ den4$Month + den4$Destination + den4$`Cannibas?` + den4$UMCSENTLag3)
+summary(m1)
+cv_result1 = cv.glm(den4, m1, K=5)
+cv_result1$delta
+#adjusted delta: 0.03278247
+```
+#Model 2: Concession DV + IVs: (`Deplaned`, `UMCSENTLag2`, `Month`)
+```{r}
+mod2 = lm(den4$Concession ~ den4$Deplaned + den4$UMCSENTLag2 + den4$Month)
+summary(mod2)
+plot(den4$Concession, mod2$residuals, xlab = 'pred', ylab = 'res', main = 'Residuals vs Predicted')
+abline(h=0, col='red')
+qqnorm(mod2$residuals)
+qqline(mod2$residuals, col=2)
+hist(mod2$residuals)
+AIC(mod2)
+BIC(mod2)
+durbinWatsonTest(mod2)
+anova(mod2)
+vif(mod2)
+#adjusted r2: 0.7309
+#AIC: 1800.509
+#BIC: 1832.656
+#RMSE: 347,500
+#DW test: p=0.836 Do not reject H0 and no autocorrelation
 
+```
+#Model 2: running prediction for `Month` values: March - June 2017
+```{r}
+model2.predict = predict(mod2, den.predict2); model2.predict
+#5340259 5207826 5684507 5695202
+```
+#Model 2: Leave-k out cross validation
+```{r}
+library(boot)
+set.seed(4)
+m2 = glm(den4$Concession ~ den4$Deplaned + den4$UMCSENTLag2 + den4$Month)
+summary(m2)
+cv_result2 = cv.glm(den4, m2, K=5)
+cv_result2$delta
+#adjusted delta: 849635678249
+```
 
 
 
