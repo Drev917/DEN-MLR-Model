@@ -195,7 +195,6 @@ vif(mod2)
 #BIC: 1832.656
 #RMSE: 347,500
 #DW test: p=0.836 Do not reject H0 and no autocorrelation
-
 ```
 #Model 2: running prediction for `Month` values: March - June 2017
 ```{r}
@@ -212,8 +211,98 @@ cv_result2 = cv.glm(den4, m2, K=5)
 cv_result2$delta
 #adjusted delta: 849635678249
 ```
+#Model 3: Parking DV + IVs: (`UMCSENTLag2`, `Cannibas`, `Month`)
+```{r}
+mod3 = lm(den4$Parking ~ den4$UMCSENTLag2 + den4$`Cannibas?` + den4$Month)
+summary(mod3)
+plot(den4$Parking, mod3$residuals, xlab = 'pred', ylab = 'res', main = 'Residuals vs Predicted')
+abline(h=0, col='red')
+qqnorm(mod3$residuals)
+qqline(mod3$residuals, col=2)
+hist(mod3$residuals)
+AIC(mod3)
+BIC(mod3)
+durbinWatsonTest(mod3)
+anova(mod3)
+vif(mod3)
+#adjusted r2: 0.6241
+#AIC: 1926.021
+#BIC: 1958.168
+#RMSE: 940,800
+#DW test: p=0.182 Do not reject H0 and no autocorrelation 
+
+#Tried combination of Destination/Origin +Dest/Enplaned/Transfer/Lg1-3/Month/Year
+```
+#Model 3: running prediction for `Month` values: March - June 2017
+```{r}
+model3.predict = predict(mod3, den.predict3); model3.predict
+#15364870 15087553 15389519 15384025  
+```
+#Model 3: Leave-k out cross validation
+```{r}
+library(boot)
+set.seed(4)
+m3 = glm(den4$Concession ~ den4$UMCSENTLag2 + den4$`Cannibas?` + den4$Month)
+summary(m3)
+cv_result3 = cv.glm(den4, m3, K=5)
+cv_result3$delta
+#adjusted delta: 764367218313
+```
+#Model 4: Rental Car DV + IVs: (`Origin` + `Destin`, `UMCSENTLag3`, `Cannibas`, `Month`)
+```{r}
+mod4 = lm(log(den4$`Rental Car`) ~ den4$`Origin + Destin` + den4$UMCSENTLag3 + den4$`Cannibas?` + den4$Month)
+summary(mod4)
+plot(den4$`Rental Car`, mod4$residuals, xlab = 'pred', ylab = 'res', main = 'Residuals vs Predicted')
+abline(h=0, col='red')
+qqnorm(mod4$residuals)
+qqline(mod4$residuals, col=2)
+hist(mod4$residuals)
+AIC(mod4)
+BIC(mod4)
+durbinWatsonTest(mod4)
+anova(mod4)
+vif(mod4)
+#adjusted r2: 0.8447 
+#AIC: -90.41809
+#BIC: -56.12794
+#RMSE: 426724.8 
+#DW test: p=0.706 Do not reject H0 and no autocorrelation 
+
+#inverse transformation of log base e on RMSE
+sigma(mod4)
+den4$`Rental Car Log` = log(den4$`Rental Car`)
 
 
+rmset <- function(model){
+  y = den4$`Rental Car Log`
+  y.pred = predict(model)
+  
+  y<-exp(y) - 1
+  y.pred<-exp(y.pred)-1
+  
+  return(sqrt(mean((y - y.pred)^2)))
+} 
+rmset (mod4)
+
+#Tried combination of Destination/Origin +Dest/Enplaned/Transfer/Lg1-3/Month/Year
+```
+#Model 4: running prediction for `Month` values: March - June 2017
+```{r}
+model4.predict = predict(mod4, den.predict4)
+#used exponential function as used log in original lm
+exp(model4.predict)
+#5423134 4223400 4347512 5322921
+```
+#Model 4: Leave-k out cross validation
+```{r}
+library(boot)
+set.seed(4)
+m4 = glm(den4$`Rental Car` ~ den4$`Origin + Destin` + den4$UMCSENTLag3 + den4$`Cannibas?` + den4$Month)
+summary(m4)
+cv_result4 = cv.glm(den4, m4, K=5)
+cv_result4$delta
+#adjusted delta: 2.235139e+12
+```
 
 
 
