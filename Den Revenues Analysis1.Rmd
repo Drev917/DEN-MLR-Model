@@ -303,7 +303,28 @@ cv_result4 = cv.glm(den4, m4, K=5)
 cv_result4$delta
 #adjusted delta: 2.235139e+12
 ```
+#Model 5: Ground DV + IVs: (`Origin` + `Destin`, `UMCSENTLag1`, `Month`)
+```{r}
+mod5 = lm(den4$Ground ~ den4$`Origin + Destin` + den4$UMCSENTLag1 + den4$Month)
+summary(mod5)
+plot(den4$Ground, mod5$residuals, xlab = 'pred', ylab = 'res', main = 'Residuals vs Predicted')
+abline(h=0, col='red')
+qqnorm(mod5$residuals)
+qqline(mod5$residuals, col=2)
+hist(mod5$residuals)
+AIC(mod5)
+BIC(mod5)
+durbinWatsonTest(mod5)
+anova(mod5)
+vif(mod5)
+#adjusted r2: 0.8105
+#AIC: 1628.353
+#BIC: 1660.5
+#RMSE: 88,620
+#DW test: p=0.492 Do not reject H0 and no autocorrelation 
 
+#Tried combination of Destination/Origin +Dest/Enplaned/Transfer/Lg1-3/Time/Month/Year
+```
 
 
 
