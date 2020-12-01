@@ -11,3 +11,7 @@
 *On top of predicting total non-airline revenue as a comprehensive response variable, we looked at each of the dependent variables independently.
 
 ![ScreenShot](https://github.com/Drev917/DEN-MLR-Model/blob/main/NonAirline%20Slides/NA%202.JPG)
+
+#### We then looked at the data as a whole to gain an idea of the different variables and observation values:
+
+![ScreenShot](https://github.com/Drev917/DEN-MLR-Model/blob/main/NonAirline%20Slides/NA%203.JPG)
