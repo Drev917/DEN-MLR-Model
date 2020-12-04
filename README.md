@@ -15,3 +15,14 @@
 #### We then looked at the data as a whole to gain an idea of the different variables and observation values:
 
 ![ScreenShot](https://github.com/Drev917/DEN-MLR-Model/blob/main/NonAirline%20Slides/NA%203.JPG)
+
+#### We used the following libraries to perform the EDA: 
+- dplyr
+- data.table
+- tidyr
+- janitor
+- reshape2
+- stats
+- ggplot2
+
+![ScreenShot](https://github.com/Drev917/DEN-MLR-Model/blob/main/NonAirline%20Slides/NA%204.JPG)
