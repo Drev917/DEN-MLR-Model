@@ -26,3 +26,29 @@
 - ggplot2
 
 ![ScreenShot](https://github.com/Drev917/DEN-MLR-Model/blob/main/NonAirline%20Slides/NA%204.JPG)
+
+#### We also looked at seasonality between non-airline revenue and months/years as a timeseries
+
+![ScreenShot](https://github.com/Drev917/DEN-MLR-Model/blob/main/NonAirline%20Slides/NA%205.JPG)
+
+#### For our comprehensive non-airline revenue response variable: `TotalRev` we chose the following predictor variables as statistically significant and influential towards our regression model:
+
+- `Month`
+- `Destination`
+- `Cannabis?`
+- `UMCSENTLag3`
+
+#### Adjusted Coefficient of Determination: 85.6%
+
+![ScreenShot](https://github.com/Drev917/DEN-MLR-Model/blob/main/NonAirline%20Slides/NA%206.JPG)
+
+#### We noticed non-normality of errors when plotting the residuals and checking for multiple linear regression violations of assumptions.
+#### By performing a log transformation on the response variable `TotalRev`, we were able to spread our residual plot and correct any violations.
+
+![ScreenShot](https://github.com/Drev917/DEN-MLR-Model/blob/main/NonAirline%20Slides/NA%207.JPG)
+
+#### Lastly, an analysis was run on each of the factors that comprised the response variable in turn looking at residual standard error and ABS of the difference between training and test sets.
+
+![ScreenShot](https://github.com/Drev917/DEN-MLR-Model/blob/main/NonAirline%20Slides/NA%208.JPG)
+
+### Thanks for reading
